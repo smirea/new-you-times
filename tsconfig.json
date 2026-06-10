@@ -2,11 +2,10 @@
 	// pulled from bun init
 	"compilerOptions": {
 		"lib": ["ESNext", "DOM"],
-		"types": ["bun"],
+		"types": ["bun", "svelte"],
 		"target": "ESNext",
 		"module": "Preserve",
 		"moduleDetection": "force",
-		"jsx": "react-jsx",
 		"allowJs": true,
 
 		"moduleResolution": "bundler",
@@ -27,5 +26,6 @@
 		"paths": {
 			"shared/*": ["./shared/*"]
 		}
-	}
+	},
+	"exclude": ["node_modules", "dist", "build", "**/dist", "**/build"]
 }

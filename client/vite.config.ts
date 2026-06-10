@@ -1,18 +1,17 @@
 import { defineConfig } from 'vite';
 import { env } from 'node:process';
-// import MillionLint from "@million/lint";
-import react from '@vitejs/plugin-react';
-import { tanstackRouter } from '@tanstack/router-plugin/vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import tailwindcss from '@tailwindcss/vite';
 
-if (!env.CLIENT_PORT) throw new Error('CLIENT_PORT is not set');
-if (!env.API_PORT) throw new Error('API_PORT is not set');
-
-const clientPort = Number(env.CLIENT_PORT);
-const apiPort = Number(env.API_PORT);
-if (Number.isNaN(clientPort)) throw new Error('CLIENT_PORT must be a valid number');
-if (Number.isNaN(apiPort)) throw new Error('API_PORT must be a valid number');
+const clientPort = readPort('CLIENT_PORT', 6060);
+const apiPort = readPort('API_PORT', 6061);
 const allowedHosts = env.CLIENT_HOST ? [env.CLIENT_HOST] : undefined;
+
+function readPort(name: 'CLIENT_PORT' | 'API_PORT', fallback: number) {
+	const port = Number(env[name] ?? fallback);
+	if (Number.isNaN(port)) throw new Error(`${name} must be a valid number`);
+	return port;
+}
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -20,6 +19,7 @@ export default defineConfig({
 		tsconfigPaths: true,
 	},
 	server: {
+		host: '0.0.0.0',
 		allowedHosts,
 		port: clientPort,
 		strictPort: true,
@@ -32,12 +32,5 @@ export default defineConfig({
 			},
 		},
 	},
-	plugins: [
-		tanstackRouter({
-			target: 'react',
-			autoCodeSplitting: true,
-		}) as any,
-		react(),
-		tailwindcss() as any,
-	],
+	plugins: [svelte(), tailwindcss() as any],
 });
